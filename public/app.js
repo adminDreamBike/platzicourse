@@ -187,6 +187,21 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],3:[function(require,module,exports){
+/* global HTMLElement */
+
+'use strict'
+
+module.exports = function emptyElement (element) {
+  if (!(element instanceof HTMLElement)) {
+    throw new TypeError('Expected an element')
+  }
+
+  var node
+  while ((node = element.lastChild)) element.removeChild(node)
+  return element
+}
+
+},{}],4:[function(require,module,exports){
 (function (process){
   /* globals require, module */
 
@@ -812,7 +827,7 @@ process.umask = function() { return 0; };
   page.sameOrigin = sameOrigin;
 
 }).call(this,require('_process'))
-},{"_process":2,"path-to-regexp":4}],4:[function(require,module,exports){
+},{"_process":2,"path-to-regexp":5}],5:[function(require,module,exports){
 var isarray = require('isarray')
 
 /**
@@ -1204,12 +1219,12 @@ function pathToRegexp (path, keys, options) {
   return stringToRegexp(path, keys, options)
 }
 
-},{"isarray":5}],5:[function(require,module,exports){
+},{"isarray":6}],6:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var bel = require('bel') // turns template tag into DOM elements
 var morphdom = require('morphdom') // efficiently diffs + morphs two DOM elements
 var defaultEvents = require('./update-events.js') // default events to be copied when dom elements update
@@ -1253,7 +1268,7 @@ module.exports.update = function (fromNode, toNode, opts) {
   }
 }
 
-},{"./update-events.js":15,"bel":7,"morphdom":14}],7:[function(require,module,exports){
+},{"./update-events.js":16,"bel":8,"morphdom":15}],8:[function(require,module,exports){
 var document = require('global/document')
 var hyperx = require('hyperx')
 var onload = require('on-load')
@@ -1408,7 +1423,7 @@ module.exports = hyperx(belCreateElement, {comments: true})
 module.exports.default = module.exports
 module.exports.createElement = belCreateElement
 
-},{"global/document":8,"hyperx":10,"on-load":12}],8:[function(require,module,exports){
+},{"global/document":9,"hyperx":11,"on-load":13}],9:[function(require,module,exports){
 (function (global){
 var topLevel = typeof global !== 'undefined' ? global :
     typeof window !== 'undefined' ? window : {}
@@ -1429,7 +1444,7 @@ if (typeof document !== 'undefined') {
 module.exports = doccy;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"min-document":1}],9:[function(require,module,exports){
+},{"min-document":1}],10:[function(require,module,exports){
 (function (global){
 var win;
 
@@ -1446,7 +1461,7 @@ if (typeof window !== "undefined") {
 module.exports = win;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var attrToProp = require('hyperscript-attribute-to-property')
 
 var VAR = 0, TEXT = 1, OPEN = 2, CLOSE = 3, ATTR = 4
@@ -1726,7 +1741,7 @@ var closeRE = RegExp('^(' + [
 ].join('|') + ')(?:[\.#][a-zA-Z0-9\u007F-\uFFFF_:-]+)*$')
 function selfClosing (tag) { return closeRE.test(tag) }
 
-},{"hyperscript-attribute-to-property":11}],11:[function(require,module,exports){
+},{"hyperscript-attribute-to-property":12}],12:[function(require,module,exports){
 module.exports = attributeToProperty
 
 var transform = {
@@ -1747,7 +1762,7 @@ function attributeToProperty (h) {
   }
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /* global MutationObserver */
 var document = require('global/document')
 var window = require('global/window')
@@ -1848,7 +1863,7 @@ function eachMutation (nodes, fn) {
   }
 }
 
-},{"assert":13,"global/document":8,"global/window":9}],13:[function(require,module,exports){
+},{"assert":14,"global/document":9,"global/window":10}],14:[function(require,module,exports){
 assert.notEqual = notEqual
 assert.notOk = notOk
 assert.equal = equal
@@ -1872,7 +1887,7 @@ function assert (t, m) {
   if (!t) throw new Error(m || 'AssertionError')
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 var range; // Create a range object for efficently rendering strings to elements.
@@ -2556,7 +2571,7 @@ var morphdom = morphdomFactory(morphAttrs);
 
 module.exports = morphdom;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = [
   // attribute events (can be set with attributes)
   'onclick',
@@ -2594,62 +2609,128 @@ module.exports = [
   'onfocusout'
 ]
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var page = require('page');
-var yo = require('yo-yo');
-var main = document.getElementById('main-container');
-//var empty = require('empty-element');
 
 page('/', function (ctx, next) {
-    //main.innerHTML = '<a href="/signup">Signup</a>'
+    var main = document.getElementById('main-container');
+    main.innerHTML = '<a href="/signup">Signup</a>';
 });
 
-page('/signup', function (ctx, next) {
+},{"page":4}],18:[function(require,module,exports){
+var page = require('page');
 
-    var el = yo`<div class="container">
+require('./homepage');
+require('./signup');
+require('./signin');
+
+page();
+
+},{"./homepage":17,"./signin":20,"./signup":22,"page":4}],19:[function(require,module,exports){
+var yo = require('yo-yo');
+
+module.exports = function landing(box) {
+    return yo`<div class="container">
             <div class="row">
                 <div class="col s10 push-s1">
                     <div class="row">
                         <div class="col m5 hide-on-small-only">
                             <img class="iphone" src="iPhone-PNG.png" alt="">
                         </div>
-                        <div class="col s12 m7">
-                            <div class="row">
-                                <div class="signup-box">
-                                    <h1 class="platzigram">Platzigram</h1>
-                                    <form action="" class="signup-form">
-                                        <h2>Registrate para ver fotos de tus amigos estudiando en Platzi</h2>
-                                        <div class="section">
-                                            <a href="" class="btn btn-fb hiden-on-small-only">Iniciar sesion con Facebook</a>
-                                            <a href="" class="btn btn-fb hiden-on-med-and-up">Iniciar sesiòn</a>
-                                        </div>
-                                        <div class="divider">
-
-                                        </div>
-                                        <div class="section">
-                                            <input type="email" name="email" placeholder="Correo electronico" />
-                                            <input type="text" name="name" placeholder="Nombre Completo" />
-                                            <input type="text" name="username" placeholder="Nombre de Usuario" />
-                                            <input type="password" name="password" placeholder="Contraseña" />
-                                            <button class="btn waves-effect waves-light btn-signup" type="submit">Registrate</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="login-box">
-                                    ¿Tienes una cuenta? <a href="/signin">Entrar</a>
-                                </div>
-                            </div>
-                        </div>
+                        ${box}
                     </div>
                 </div>
             </div>
         </div>`;
+};
 
-    main.appendChild(el);
+},{"yo-yo":7}],20:[function(require,module,exports){
+var page = require('page');
+var empty = require('empty-element');
+var template = require('./template');
+
+page('/signin', function (ctx, next) {
+    var main = document.getElementById('main-container');
+    empty(main).appendChild(template);
 });
 
-page();
+},{"./template":21,"empty-element":3,"page":4}],21:[function(require,module,exports){
+var yo = require('yo-yo');
+var landing = require('../landing');
 
-},{"page":3,"yo-yo":6}]},{},[16]);
+var signinForm = `yo <div class="col s12 m7">
+<div class="row">
+    <div class="signup-box">
+        <h1 class="platzigram">Platzigram</h1>
+        <form action="" class="signup-form">
+            <div class="section">
+                <a href="" class="btn btn-fb hiden-on-small-only">Iniciar sesion con Facebook</a>
+                <a href="" class="btn btn-fb hiden-on-med-and-up">Iniciar sesiòn</a>
+            </div>
+            <div class="divider">
+
+            </div>
+            <div class="section">
+                <input type="text" name="username" placeholder="Nombre de Usuario" />
+                <input type="password" name="password" placeholder="Contraseña" />
+                <button class="btn waves-effect waves-light btn-signup" type="submit">Inicia Sesion</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="login-box">
+        ¿No tienes una cuenta? <a href="/signin">Registrate</a>
+    </div>
+</div>
+</div>`;
+
+module.exports = landing(signinForm);
+
+},{"../landing":19,"yo-yo":7}],22:[function(require,module,exports){
+var page = require('page');
+var empty = require('empty-element');
+var template = require('./template');
+
+page('/signup', function (ctx, next) {
+    var main = document.getElementById('main-container');
+    empty(main).appendChild(template);
+});
+
+},{"./template":23,"empty-element":3,"page":4}],23:[function(require,module,exports){
+var yo = require('yo-yo');
+var landing = require('../landing');
+
+var signupForm = `yo <div class="col s12 m7">
+<div class="row">
+    <div class="signup-box">
+        <h1 class="platzigram">Platzigram</h1>
+        <form action="" class="signup-form">
+            <h2>Registrate para ver fotos de tus amigos estudiando en Platzi</h2>
+            <div class="section">
+                <a href="" class="btn btn-fb hiden-on-small-only">Iniciar sesion con Facebook</a>
+                <a href="" class="btn btn-fb hiden-on-med-and-up">Iniciar sesiòn</a>
+            </div>
+            <div class="divider">
+
+            </div>
+            <div class="section">
+                <input type="email" name="email" placeholder="Correo electronico" />
+                <input type="text" name="name" placeholder="Nombre Completo" />
+                <input type="text" name="username" placeholder="Nombre de Usuario" />
+                <input type="password" name="password" placeholder="Contraseña" />
+                <button class="btn waves-effect waves-light btn-signup" type="submit">Registrate</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="login-box">
+        ¿Tienes una cuenta? <a href="/signin">Entrar</a>
+    </div>
+</div>
+</div>`;
+
+module.exports = landing(signupForm);
+
+},{"../landing":19,"yo-yo":7}]},{},[18]);
